@@ -19,7 +19,4 @@ CONTENT
            006 : 6FFE;  -- 	ADDI   -2
            007 : 3005;  -- 	JNEG   WaitingLoop
            008 : 8800;  -- 	RETURN
-           009 : 0000;  -- Pattern:   DW 0
-           00A : 0001;  -- Bit0:      DW &B0000000001
-           00B : 0200;  -- Bit9:      DW &B1000000000
   END;

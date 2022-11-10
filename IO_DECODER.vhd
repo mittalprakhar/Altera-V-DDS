@@ -17,7 +17,8 @@ ENTITY IO_DECODER IS
     TIMER_EN      : OUT STD_LOGIC;
     HEX0_EN       : OUT STD_LOGIC;
     HEX1_EN       : OUT STD_LOGIC;
-	 BEEP_EN       : OUT STD_LOGIC
+	 BEEP_EN       : OUT STD_LOGIC;
+	 NOTE_EN			: OUT STD_LOGIC
   );
 
 END ENTITY;
@@ -36,5 +37,6 @@ begin
   HEX0_EN      <= '1' WHEN (ADDR_INT = 16#004#) and (IO_CYCLE = '1') ELSE '0';
   HEX1_EN      <= '1' WHEN (ADDR_INT = 16#005#) and (IO_CYCLE = '1') ELSE '0';
   BEEP_EN      <= '1' WHEN (ADDR_INT = 16#040#) and (IO_CYCLE = '1') ELSE '0';
-      
+  NOTE_EN      <= '1' WHEN (ADDR_INT = 16#041#) and (IO_CYCLE = '1') ELSE '0';
+
 END a;
