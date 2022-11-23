@@ -1,6 +1,6 @@
 -- IO DECODER for SCOMP
 -- This eliminates the need for a lot of AND decoders or Comparators 
---    that would otherwise be spread around the top-level BDF
+-- that would otherwise be spread around the top-level BDF
 
 LIBRARY IEEE;
 USE ieee.std_logic_1164.all;
@@ -17,8 +17,10 @@ ENTITY IO_DECODER IS
     TIMER_EN      : OUT STD_LOGIC;
     HEX0_EN       : OUT STD_LOGIC;
     HEX1_EN       : OUT STD_LOGIC;
+	 MODE_EN			: OUT STD_LOGIC;
 	 BEEP_EN       : OUT STD_LOGIC;
-	 NOTE_EN			: OUT STD_LOGIC
+	 NOTE_EN			: OUT STD_LOGIC;
+	 VOLUME_EN		: OUT STD_LOGIC
   );
 
 END ENTITY;
@@ -27,7 +29,7 @@ ARCHITECTURE a OF IO_DECODER IS
 
   SIGNAL  ADDR_INT  : INTEGER RANGE 0 TO 2047;
   
-begin
+BEGIN
 
   ADDR_INT <= TO_INTEGER(UNSIGNED(IO_ADDR));
         
@@ -36,7 +38,9 @@ begin
   TIMER_EN     <= '1' WHEN (ADDR_INT = 16#002#) and (IO_CYCLE = '1') ELSE '0';
   HEX0_EN      <= '1' WHEN (ADDR_INT = 16#004#) and (IO_CYCLE = '1') ELSE '0';
   HEX1_EN      <= '1' WHEN (ADDR_INT = 16#005#) and (IO_CYCLE = '1') ELSE '0';
-  BEEP_EN      <= '1' WHEN (ADDR_INT = 16#040#) and (IO_CYCLE = '1') ELSE '0';
-  NOTE_EN      <= '1' WHEN (ADDR_INT = 16#041#) and (IO_CYCLE = '1') ELSE '0';
-
+  MODE_EN      <= '1' WHEN (ADDR_INT = 16#040#) and (IO_CYCLE = '1') ELSE '0';
+  BEEP_EN      <= '1' WHEN (ADDR_INT = 16#041#) and (IO_CYCLE = '1') ELSE '0';
+  NOTE_EN      <= '1' WHEN (ADDR_INT = 16#042#) and (IO_CYCLE = '1') ELSE '0';
+  VOLUME_EN    <= '1' WHEN (ADDR_INT = 16#043#) and (IO_CYCLE = '1') ELSE '0';
+  
 END a;

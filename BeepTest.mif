@@ -11,12 +11,31 @@ CONTENT
     [000..7FF] : 0000;  -- Default to NOP
 
            000 : 9000;  -- 	IN     Switches
-           001 : 9840;  -- 	OUT    Beep
-           002 : 8004;  -- 	CALL   Delay
-           003 : 2800;  -- 	JUMP   0
-           004 : 9802;  -- 	OUT    Timer
-           005 : 9002;  -- 	IN     Timer
-           006 : 6FFE;  -- 	ADDI   -2
-           007 : 3005;  -- 	JNEG   WaitingLoop
-           008 : 8800;  -- 	RETURN
+           001 : 9842;  -- 	OUT    Note
+           002 : B802;  -- 	LOADI  2	
+           003 : 9840;  -- 	OUT    Mode
+           004 : B801;  -- 	LOADI  1
+           005 : 9843;  -- 	OUT	   Volume
+           006 : 8017;  -- 	CALL   Delay
+           007 : 8017;  -- 	CALL   Delay
+           008 : 8017;  -- 	CALL   Delay
+           009 : 8017;  -- 	CALL   Delay
+           00A : 8017;  -- 	CALL   Delay
+           00B : 9000;  -- 	IN     Switches
+           00C : 9842;  -- 	OUT    Note
+           00D : B802;  -- 	LOADI  2	
+           00E : 9840;  -- 	OUT    Mode
+           00F : B802;  -- 	LOADI  2
+           010 : 9843;  -- 	OUT	   Volume
+           011 : 8017;  -- 	CALL   Delay
+           012 : 8017;  -- 	CALL   Delay
+           013 : 8017;  -- 	CALL   Delay
+           014 : 8017;  -- 	CALL   Delay
+           015 : 8017;  -- 	CALL   Delay
+           016 : 2800;  -- 	JUMP   0
+           017 : 9802;  -- 	OUT    Timer
+           018 : 9002;  -- 	IN     Timer
+           019 : 6FFE;  -- 	ADDI   -2
+           01A : 3018;  -- 	JNEG   WaitingLoop
+           01B : 8800;  -- 	RETURN
   END;
