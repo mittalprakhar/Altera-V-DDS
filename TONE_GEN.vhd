@@ -31,15 +31,9 @@ ARCHITECTURE gen OF TONE_GEN IS
 
 	SIGNAL phase_register 		: STD_LOGIC_VECTOR(14 DOWNTO 0);
 	SIGNAL tuning_word    		: STD_LOGIC_VECTOR(11 DOWNTO 0);
-	SIGNAL base_tuning_word 	: STD_LOGIC_VECTOR(11 DOWNTO 0);
 	SIGNAL cs_next_tuning_word : STD_LOGIC_VECTOR(11 DOWNTO 0);
-	SIGNAL ns_next_tuning_word	: STD_LOGIC_VECTOR(11 DOWNTO 0);
 	SIGNAL sound_data				: STD_LOGIC_VECTOR(7 DOWNTO 0);
 	SIGNAL mode						: STD_LOGIC_VECTOR(1 DOWNTO 0);
-	SIGNAL note						: STD_LOGIC_VECTOR(4 DOWNTO 0);
-	SIGNAL octave					: STD_LOGIC_VECTOR(3 DOWNTO 0);
-	SIGNAL volume					: STD_LOGIC_VECTOR(1 DOWNTO 0);
-	SIGNAL desired_volume		: STD_LOGIC_VECTOR(1 DOWNTO 0);
 	
 BEGIN
 
@@ -66,10 +60,17 @@ BEGIN
 	);
 	
 	-- process to perform DDS
-	PROCESS(RESETN, SAMPLE_CLK, CS, NS) BEGIN
+	PROCESS(RESETN, SAMPLE_CLK, CS, NS) 
+		VARIABLE base_tuning_word 	: STD_LOGIC_VECTOR(11 DOWNTO 0);
+		VARIABLE ns_next_tuning_word	: STD_LOGIC_VECTOR(11 DOWNTO 0);
+		VARIABLE note						: STD_LOGIC_VECTOR(4 DOWNTO 0);
+		VARIABLE octave					: STD_LOGIC_VECTOR(3 DOWNTO 0);
+		VARIABLE volume					: STD_LOGIC_VECTOR(1 DOWNTO 0);
+	BEGIN
 		IF RESETN = '0' THEN
 			phase_register <= "000000000000000";
 			mode <= "00";
+			volume := "01";
 		ELSE
 			IF RISING_EDGE(SAMPLE_CLK) THEN
 				IF mode = "01" THEN
@@ -84,8 +85,9 @@ BEGIN
 
 				ELSIF mode = "10" THEN
 					-- Smooth stopping for octave-note
+					tuning_word <= ns_next_tuning_word;
+
 					IF phase_register = "000000000000000" and not (tuning_word = ns_next_tuning_word) THEN
-						tuning_word <= ns_next_tuning_word;
 						phase_register <= "000000000000000";
 					ELSE
 						-- Increment the phase register by the tuning word.
@@ -93,9 +95,6 @@ BEGIN
 					END IF;
 				END IF;
 				
-				IF phase_register = "000000000000000" THEN
-					volume <= desired_volume;
-				END IF;
 			END IF;
 			
 			IF RISING_EDGE(CS) THEN
@@ -107,43 +106,43 @@ BEGIN
 			
 			IF RISING_EDGE(NS) THEN
 				-- Interpret CMD as note and octave values
-				note <= CMD(4 DOWNTO 0);
-				octave <= CMD(8 DOWNTO 5);
+				note := CMD(4 DOWNTO 0);
+				octave := CMD(8 DOWNTO 5);
 				
 				IF (octave >= "0010" AND note <= "01011") THEN
 						-- Set the base tuning word based on the note (0 starts at C)				
 					CASE note IS 
-						WHEN "00000" => base_tuning_word <= "000000101101";
-						WHEN "00001" => base_tuning_word <= "000000101111";
-						WHEN "00010" => base_tuning_word <= "000000110010";
-						WHEN "00011" => base_tuning_word <= "000000110101";
-						WHEN "00100" => base_tuning_word <= "000000111000";
-						WHEN "00101" => base_tuning_word <= "000000111100";
-						WHEN "00110" => base_tuning_word <= "000000111111";
-						WHEN "00111" => base_tuning_word <= "000001000011";
-						WHEN "01000" => base_tuning_word <= "000001000111";
-						WHEN "01001" => base_tuning_word <= "000001001011";
-						WHEN "01010" => base_tuning_word <= "000001010000";
-						WHEN "01011" => base_tuning_word <= "000001010100";
-						WHEN OTHERS  => base_tuning_word <= "000000000000";
+						WHEN "00000" => base_tuning_word := "000000101101";
+						WHEN "00001" => base_tuning_word := "000000101111";
+						WHEN "00010" => base_tuning_word := "000000110010";
+						WHEN "00011" => base_tuning_word := "000000110101";
+						WHEN "00100" => base_tuning_word := "000000111000";
+						WHEN "00101" => base_tuning_word := "000000111100";
+						WHEN "00110" => base_tuning_word := "000000111111";
+						WHEN "00111" => base_tuning_word := "000001000011";
+						WHEN "01000" => base_tuning_word := "000001000111";
+						WHEN "01001" => base_tuning_word := "000001001011";
+						WHEN "01010" => base_tuning_word := "000001010000";
+						WHEN "01011" => base_tuning_word := "000001010100";
+						WHEN OTHERS  => base_tuning_word := "000000000000";
 					END CASE;
 
 					-- Left shift the base tuning word by the number of octaves
 					-- and set it to the tuning word
 					CASE octave IS 
-						WHEN "0010" => ns_next_tuning_word <= base_tuning_word(11 DOWNTO 0);
-						WHEN "0011" => ns_next_tuning_word <= base_tuning_word(10 DOWNTO 0) & "0";
-						WHEN "0100" => ns_next_tuning_word <= base_tuning_word(9 DOWNTO 0) & "00";
-						WHEN "0101" => ns_next_tuning_word <= base_tuning_word(8 DOWNTO 0) & "000";
-						WHEN "0110" => ns_next_tuning_word <= base_tuning_word(7 DOWNTO 0) & "0000";
-						WHEN "0111" => ns_next_tuning_word <= base_tuning_word(6 DOWNTO 0) & "00000";
-						WHEN "1000" => ns_next_tuning_word <= base_tuning_word(5 DOWNTO 0) & "000000";
-						WHEN OTHERS => ns_next_tuning_word <= "000000000000";
+						WHEN "0010" => ns_next_tuning_word := base_tuning_word(11 DOWNTO 0);
+						WHEN "0011" => ns_next_tuning_word := base_tuning_word(10 DOWNTO 0) & "0";
+						WHEN "0100" => ns_next_tuning_word := base_tuning_word(9 DOWNTO 0) & "00";
+						WHEN "0101" => ns_next_tuning_word := base_tuning_word(8 DOWNTO 0) & "000";
+						WHEN "0110" => ns_next_tuning_word := base_tuning_word(7 DOWNTO 0) & "0000";
+						WHEN "0111" => ns_next_tuning_word := base_tuning_word(6 DOWNTO 0) & "00000";
+						WHEN "1000" => ns_next_tuning_word := base_tuning_word(5 DOWNTO 0) & "000000";
+						WHEN OTHERS => ns_next_tuning_word := "000000000000";
 					END CASE;
 				ELSE
 					-- Smooth Stopping
-					base_tuning_word <= "000000000000";
-					ns_next_tuning_word <= "000000000000";
+					base_tuning_word := "000000000000";
+					ns_next_tuning_word := "000000000000";
 				END IF;
 			END IF;
 			
@@ -152,7 +151,7 @@ BEGIN
 			END IF;
 			
 			IF RISING_EDGE(VOL_S) THEN
-				desired_volume <= CMD(1 DOWNTO 0);
+				volume := CMD(1 DOWNTO 0);
 			END IF;
 		END IF;
 		
