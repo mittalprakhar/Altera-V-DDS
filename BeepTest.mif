@@ -10,32 +10,57 @@ CONTENT
   BEGIN
     [000..7FF] : 0000;  -- Default to NOP
 
-           000 : 9000;  -- 	IN     Switches
-           001 : 9842;  -- 	OUT    Note
-           002 : B802;  -- 	LOADI  2	
-           003 : 9840;  -- 	OUT    Mode
-           004 : B801;  -- 	LOADI  1
-           005 : 9843;  -- 	OUT	   Volume
-           006 : 8017;  -- 	CALL   Delay
-           007 : 8017;  -- 	CALL   Delay
-           008 : 8017;  -- 	CALL   Delay
-           009 : 8017;  -- 	CALL   Delay
-           00A : 8017;  -- 	CALL   Delay
-           00B : 9000;  -- 	IN     Switches
-           00C : 9842;  -- 	OUT    Note
-           00D : B802;  -- 	LOADI  2	
-           00E : 9840;  -- 	OUT    Mode
-           00F : B802;  -- 	LOADI  2
-           010 : 9843;  -- 	OUT	   Volume
-           011 : 8017;  -- 	CALL   Delay
-           012 : 8017;  -- 	CALL   Delay
-           013 : 8017;  -- 	CALL   Delay
-           014 : 8017;  -- 	CALL   Delay
-           015 : 8017;  -- 	CALL   Delay
-           016 : 2800;  -- 	JUMP   0
-           017 : 9802;  -- 	OUT    Timer
-           018 : 9002;  -- 	IN     Timer
-           019 : 6FFE;  -- 	ADDI   -2
-           01A : 3018;  -- 	JNEG   WaitingLoop
-           01B : 8800;  -- 	RETURN
+           000 : B802;  -- 	LOADI  2	
+           001 : 9840;  -- 	OUT    Mode
+           002 : B801;  -- 	LOADI  1
+           003 : 9843;  -- 	OUT	   Volume
+           004 : B860;  -- 	LOADI  &B001100000
+           005 : 1032;  -- 	STORE  Value
+           006 : B803;  -- 	LOADI 3
+           007 : 1030;  -- 	STORE Octave
+           008 : 0830;  -- 	LOAD Octave
+           009 : 6FFA;  -- 	ADDI -6
+           00A : 382A;  -- 	JPOS EndOctLoop
+           00B : B800;  -- 	LOADI 0 
+           00C : 1031;  -- 	STORE Note
+           00D : 0832;  -- 	LOAD Value
+           00E : 4833;  -- 	AND AndBitMask
+           00F : 1032;  -- 	STORE Value
+           010 : 0831;  -- 	LOAD Note
+           011 : 6FF5;  -- 	ADDI -11
+           012 : 3823;  -- 	JPOS EndNoteLoop
+           013 : 9000;  -- 	IN Switches
+           014 : 4834;  -- 	AND VolBitMask
+           015 : 9843;  -- 	OUT Volume
+           016 : 0832;  -- 	LOAD Value
+           017 : 9804;  -- 	OUT Hex0
+           018 : 9801;  -- 	OUT LEDs
+           019 : 9842;  -- 	OUT NoteAddr
+           01A : 802B;  -- 	CALL   Delay
+           01B : 802B;  -- 	CALL   Delay
+           01C : 0831;  -- 	LOAD Note
+           01D : 6801;  -- 	ADDI 1
+           01E : 1031;  -- 	STORE Note
+           01F : 0832;  -- 	LOAD Value
+           020 : 6801;  -- 	ADDI 1
+           021 : 1032;  -- 	STORE Value
+           022 : 2810;  -- 	JUMP   NoteLoop
+           023 : 0830;  -- 	LOAD Octave
+           024 : 6801;  -- 	ADDI 1
+           025 : 1030;  -- 	STORE Octave
+           026 : 0832;  -- 	LOAD Value
+           027 : 6820;  -- 	ADDI &B100000
+           028 : 1032;  -- 	STORE Value
+           029 : 2808;  -- 	JUMP OctLoop
+           02A : 2800;  -- 	JUMP   0
+           02B : 9802;  -- 	OUT    Timer
+           02C : 9002;  -- 	IN     Timer
+           02D : 6FFE;  -- 	ADDI   -2
+           02E : 302C;  -- 	JNEG   WaitingLoop
+           02F : 8800;  -- 	RETURN
+           030 : 0000;  -- Octave: 	   DW  000
+           031 : 0000;  -- Note:	   DW  000
+           032 : 0000;  -- Value:	   DW  000
+           033 : 01E0;  -- AndBitMask:	DW &B111100000
+           034 : 0003;  -- VolBitMask: DW &B000000011
   END;
