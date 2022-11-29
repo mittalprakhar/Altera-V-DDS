@@ -63,7 +63,7 @@ begin
 		numwords_a => 2048,
 		widthad_a => 11,
 		width_a => 16,
-		init_file => "BeepTest.mif",
+		init_file => "ChromaticScale.mif",
 		clock_enable_input_a => "BYPASS",
 		clock_enable_output_a => "BYPASS",
 		intended_device_family => "MAX 10",

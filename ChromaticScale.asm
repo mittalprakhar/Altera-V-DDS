@@ -1,6 +1,7 @@
-; BeepTest.asm
-; Sends the value from the switches to the
-; tone generator peripheral once per second.
+; ChromaticScale.asm
+; Plays a chromatic scale using the
+; tone generator peripheral with
+; switches used to control volume.
 
 ORG 0
 
